@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>키오스크 연습 - 버거챌린지</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Galmuri11&display=swap');
+
+  :root {
+    --pixel: 4px;
+    --bg: #1a0a2e;
+    --bg2: #2d1b4e;
+    --panel: #1e1040;
+    --gold: #f5c518;
+    --gold2: #e8a800;
+    --red: #e84040;
+    --red2: #b02020;
+    --green: #30c060;
+    --green2: #1a8040;
+    --blue: #3080e8;
+    --blue2: #1050a0;
+    --white: #f0e8d0;
+    --gray: #8070a0;
+    --gray2: #5040608;
+    --border: #6040a0;
+    --tab-active: #f5c518;
+    --tab-bg: #3a2060;
+    --card-bg: #2a1555;
+    --card-border: #7050c0;
+    --pixel-shadow: 4px 4px 0 #000;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Galmuri11', monospace, sans-serif;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 0;
+    image-rendering: pixelated;
+  }
+
+  #app {
+    width: 390px;
+    min-height: 100vh;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ───── PIXEL UTILITIES ───── */
+  .px-border {
+    border: 4px solid;
+    image-rendering: pixelated;
+  }
+  .px-btn {
+    cursor: pointer;
+    image-rendering: pixelated;
+    transition: transform 0.05s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .px-btn:active { transform: translate(2px, 2px); }
+
+  /* ─── SCANLINE OVERLAY ─── */
+  #app::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    width: 390px;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.07) 0px,
+      rgba(0,0,0,0.07) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; flex-direction: column; flex: 1; }
+  .screen.active { display: flex; }
+
+  /* ════════════════════════════
+     SCREEN 1: WELCOME
+  ════════════════════════════ */
+  #screen-welcome {
+    background: var(--bg);
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 20px 40px;
+  }
+
+  .welcome-top {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .logo-box {
+    background: var(--gold);
+    border: 4px solid #000;
+    box-shadow: var(--pixel-shadow);
+    padding: 12px 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-text {
+    font-size: 28px;
+    color: #1a0a2e;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .welcome-pixel-art {
+    width: 200px;
+    height: 160px;
+    image-rendering: pixelated;
+  }
+
+  .welcome-msg {
+    text-align: center;
+    color: var(--white);
+    font-size: 18px;
+    line-height: 1.8;
+    background: #2d1b4e;
+    border: 3px solid var(--border);
+    padding: 16px 20px;
+    box-shadow: var(--pixel-shadow);
+    width: 100%;
+  }
+  .welcome-msg .em { color: var(--gold); font-size: 20px; }
+
+  .welcome-btns {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+  }
+  .welcome-btn {
+    flex: 1;
+    padding: 24px 10px;
+    font-family: inherit;
+    font-size: 26px;
+    border: 4px solid #000;
+    box-shadow: var(--pixel-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.5px;
+  }
+  .welcome-btn.eat {
+    background: var(--gold);
+    color: #1a0a2e;
+  }
+  .welcome-btn.takeout {
+    background: var(--red);
+    color: #fff;
+  }
+  .welcome-btn .btn-icon { font-size: 36px; }
+  .welcome-btn .btn-sub { font-size: 13px; opacity: 0.8; }
+
+  /* ════════════════════════════
+     DAILY ORDER POPUP
+  ════════════════════════════ */
+  .daily-popup-overlay {
+    position: fixed;
+    inset: 0;
+    width: 390px;
+    background: rgba(0,0,0,0.7);
+    z-index: 500;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 60px;
+  }
+  .daily-popup-overlay.hidden { display: none; }
+
+  .daily-popup {
+    width: 340px;
+    background: #2d1b4e;
+    border: 4px solid var(--gold);
+    box-shadow: 6px 6px 0 #000;
+    padding: 20px;
+    position: relative;
+    animation: popIn 0.2s steps(3) forwards;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .daily-popup-close {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--red);
+    border: 3px solid #000;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 2px 8px;
+    cursor: pointer;
+  }
+  .daily-title {
+    font-size: 14px;
+    color: var(--gray);
+    margin-bottom: 4px;
+  }
+  .daily-head {
+    font-size: 22px;
+    color: var(--gold);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .daily-star { font-size: 18px; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .daily-menu-text {
+    background: #1a0a2e;
+    border: 3px solid var(--border);
+    padding: 14px;
+    color: var(--white);
+    font-size: 17px;
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  .daily-hint {
+    font-size: 13px;
+    color: var(--gray);
+    text-align: center;
+    border-top: 2px dashed var(--border);
+    padding-top: 10px;
+  }
+
+  /* ════════════════════════════
+     SCREEN 2: MAIN MENU
+  ════════════════════════════ */
+  #screen-main {
+    background: var(--bg);
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* Header */
+  .main-header {
+    background: #000;
+    border-bottom: 4px solid var(--gold);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .main-logo { color: var(--gold); font-size: 18px; }
+  .main-mode-badge {
+    background: var(--red);
+    border: 3px solid #000;
+    color: #fff;
+    font-size: 13px;
+    padding: 3px 10px;
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    background: #0d0020;
+    border-bottom: 4px solid #000;
+    flex-shrink: 0;
+  }
+  .tab {
+    flex: 1;
+    padding: 10px 4px;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--gray);
+    background: var(--tab-bg);
+    border: none;
+    border-right: 3px solid #000;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.4;
+    transition: background 0.1s;
+  }
+  .tab:last-child { border-right: none; }
+  .tab.active {
+    background: var(--gold);
+    color: #1a0a2e;
+    font-size: 13px;
+  }
+  .tab-icon { font-size: 16px; display: block; margin-bottom: 2px; }
+
+  /* Menu grid */
+  .menu-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-content: start;
+    max-height: calc(100vh - 310px);
+  }
+  .menu-area::-webkit-scrollbar { width: 6px; }
+  .menu-area::-webkit-scrollbar-track { background: #1a0a2e; }
+  .menu-area::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .menu-card {
+    background: var(--card-bg);
+    border: 3px solid var(--card-border);
+    box-shadow: 3px 3px 0 #000;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.05s;
+  }
+  .menu-card:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  .menu-card canvas {
+    image-rendering: pixelated;
+    width: 80px;
+    height: 80px;
+  }
+  .menu-name {
+    color: var(--white);
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .menu-price {
+    color: var(--gold);
+    font-size: 15px;
+    font-weight: bold;
+  }
+  .menu-add-btn {
+    background: var(--green);
+    border: 3px solid #000;
+    box-shadow: 2px 2px 0 #000;
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 4px 14px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+  }
+  .menu-add-btn:active { transform: translate(2px,2px); box-shadow: none; }
+
+  /* Cart */
+  .cart-area {
+    background: #0d0020;
+    border-top: 4px solid var(--border);
+    padding: 8px 10px 4px;
+    flex-shrink: 0;
+    min-height: 80px;
+    max-height: 120px;
+    overflow-y: auto;
+  }
+  .cart-area::-webkit-scrollbar { width: 4px; }
+  .cart-area::-webkit-scrollbar-thumb { background: var(--border); }
+  .cart-title {
+    color: var(--gold);
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cart-empty { color: var(--gray); font-size: 13px; text-align: center; padding: 8px; }
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--white);
+    font-size: 13px;
+    padding: 3px 0;
+    border-bottom: 1px dashed #3a2060;
+  }
+  .cart-item-name { flex: 1; }
+  .cart-item-qty {
+    color: var(--gold);
+    margin: 0 8px;
+  }
+  .cart-item-price { color: var(--white); min-width: 60px; text-align: right; }
+  .cart-item-del {
+    background: var(--red);
+    border: 2px solid #000;
+    color: #fff;
+    font-family: inherit;
+    font-size: 11px;
+    padding: 1px 6px;
+    cursor: pointer;
+    margin-left: 6px;
+  }
+
+  /* Bottom bar */
+  .bottom-bar {
+    background: #000;
+    border-top: 4px solid var(--gold);
+    padding: 10px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .total-display {
+    flex: 1;
+    color: var(--gold);
+    font-size: 16px;
+  }
+  .total-display span { font-size: 20px; }
+  .cancel-btn {
+    background: var(--gray);
+    border: 3px solid #000;
+    box-shadow: var(--pixel-shadow);
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+  .pay-btn {
+    background: var(--red);
+    border: 3px solid #000;
+    box-shadow: var(--pixel-shadow);
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  .pay-btn:disabled { background: var(--gray); cursor: not-allowed; }
+
+  /* ════════════════════════════
+     POPUP: SET UPGRADE
+  ════════════════════════════ */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    width: 390px;
+    background: rgba(0,0,0,0.75);
+    z-index: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .overlay.hidden { display: none; }
+  .popup-box {
+    width: 320px;
+    background: #2d1b4e;
+    border: 4px solid var(--gold);
+    box-shadow: 6px 6px 0 #000;
+    padding: 24px 20px 20px;
+    animation: popIn 0.15s steps(2) forwards;
+  }
+  .popup-title {
+    font-size: 18px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .popup-body {
+    font-size: 15px;
+    color: var(--white);
+    text-align: center;
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .popup-body .em { color: var(--gold); }
+  .popup-btns {
+    display: flex;
+    gap: 12px;
+  }
+  .popup-yes {
+    flex: 1;
+    background: var(--green);
+    border: 4px solid #000;
+    box-shadow: var(--pixel-shadow);
+    color: #fff;
+    font-family: inherit;
+    font-size: 18px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .popup-no {
+    flex: 1;
+    background: var(--gray);
+    border: 4px solid #000;
+    box-shadow: var(--pixel-shadow);
+    color: #fff;
+    font-family: inherit;
+    font-size: 18px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  /* ════════════════════════════
+     SCREEN 3: PAYMENT
+  ════════════════════════════ */
+  #screen-pay {
+    background: var(--bg);
+    padding: 0;
+  }
+  .pay-header {
+    background: #000;
+    border-bottom: 4px solid var(--gold);
+    padding: 14px;
+    text-align: center;
+    color: var(--gold);
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .pay-body {
+    flex: 1;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .pay-total-box {
+    background: #0d0020;
+    border: 3px solid var(--border);
+    padding: 14px;
+    text-align: center;
+    box-shadow: var(--pixel-shadow);
+  }
+  .pay-total-label { color: var(--gray); font-size: 14px; margin-bottom: 4px; }
+  .pay-total-amt { color: var(--gold); font-size: 28px; }
+  .pay-ask { color: var(--white); font-size: 16px; text-align: center; margin: 4px 0; }
+  .pay-method-btn {
+    background: var(--card-bg);
+    border: 3px solid var(--card-border);
+    box-shadow: var(--pixel-shadow);
+    padding: 16px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.05s;
+  }
+  .pay-method-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  .pay-method-btn.selected {
+    border-color: var(--gold);
+    background: #3a2060;
+  }
+  .pay-method-icon { font-size: 32px; flex-shrink: 0; }
+  .pay-method-info { flex: 1; }
+  .pay-method-name { color: var(--white); font-size: 17px; margin-bottom: 3px; }
+  .pay-method-desc { color: var(--gray); font-size: 12px; line-height: 1.5; }
+  .pay-row { display: flex; gap: 12px; }
+  .pay-row .pay-method-btn { flex: 1; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+  .pay-confirm-btn {
+    background: var(--red);
+    border: 4px solid #000;
+    box-shadow: var(--pixel-shadow);
+    color: #fff;
+    font-family: inherit;
+    font-size: 22px;
+    padding: 16px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: auto;
+  }
+  .pay-back {
+    background: var(--gray);
+    border: 4px solid #000;
+    box-shadow: var(--pixel-shadow);
+    color: #fff;
+    font-family: inherit;
+    font-size: 16px;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    margin: 0 16px 8px;
+    flex-shrink: 0;
+  }
+
+  /* ════════════════════════════
+     SCREEN 4: COMPLETE
+  ════════════════════════════ */
+  #screen-complete {
+    background: var(--bg);
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    gap: 24px;
+  }
+  .complete-icon { font-size: 80px; animation: bounce 0.6s steps(3) infinite alternate; }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-12px); } }
+  .complete-box {
+    background: #2d1b4e;
+    border: 4px solid var(--green);
+    box-shadow: var(--pixel-shadow);
+    padding: 24px;
+    text-align: center;
+    width: 100%;
+  }
+  .complete-title {
+    color: var(--green);
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+  .complete-num-label { color: var(--gray); font-size: 13px; }
+  .complete-num { color: var(--gold); font-size: 36px; margin: 4px 0 12px; }
+  .complete-sub { color: var(--white); font-size: 15px; line-height: 1.8; }
+  .complete-pixel-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .restart-btn {
+    background: var(--gold);
+    border: 4px solid #000;
+    box-shadow: var(--pixel-shadow);
+    color: #1a0a2e;
+    font-family: inherit;
+    font-size: 18px;
+    padding: 14px 30px;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  /* ────── WRONG ORDER POPUP ────── */
+  .wrong-overlay {
+    position: fixed;
+    inset: 0;
+    width: 390px;
+    background: rgba(0,0,0,0.8);
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wrong-overlay.hidden { display: none; }
+  .wrong-box {
+    width: 320px;
+    background: #2d1b4e;
+    border: 4px solid var(--red);
+    box-shadow: 6px 6px 0 #000;
+    padding: 28px 20px 22px;
+    text-align: center;
+    animation: shake 0.3s steps(4);
+  }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-8px)}
+    75%{transform:translateX(8px)}
+  }
+  .wrong-icon { font-size: 60px; margin-bottom: 10px; }
+  .wrong-title { color: var(--red); font-size: 22px; margin-bottom: 10px; }
+  .wrong-body { color: var(--white); font-size: 15px; line-height: 1.8; margin-bottom: 18px; }
+  .wrong-btn {
+    background: var(--red);
+    border: 4px solid #000;
+    box-shadow: var(--pixel-shadow);
+    color: #fff;
+    font-family: inherit;
+    font-size: 16px;
+    padding: 12px 30px;
+    cursor: pointer;
+  }
+
+  /* ─── DAILY ORDER FIXED BANNER ─── */
+  .daily-banner {
+    background: #1a0a2e;
+    border-bottom: 3px solid var(--gold);
+    border-top: 3px solid var(--gold);
+    padding: 8px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex-shrink: 0;
+    animation: bannerSlideIn 0.3s steps(4) forwards;
+  }
+  .daily-banner.hidden { display: none; }
+  @keyframes bannerSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .daily-banner-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    background: var(--gold);
+    border: 3px solid #000;
+    padding: 4px 8px;
+    box-shadow: 2px 2px 0 #000;
+  }
+  .daily-banner-star {
+    font-size: 12px;
+    color: #1a0a2e;
+    animation: blink 1s step-end infinite;
+  }
+  .daily-banner-label {
+    font-size: 11px;
+    color: #1a0a2e;
+    white-space: nowrap;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .daily-banner-text {
+    color: var(--white);
+    font-size: 13px;
+    line-height: 1.7;
+    flex: 1;
+    white-space: pre-line;
+  }
+
+  /* pixel decorations */
+  .px-deco {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    box-shadow: 8px 0 0 var(--red), 16px 0 0 var(--green);
+    margin-right: 24px;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══════════ SCREEN: WELCOME ══════════ -->
+  <div id="screen-welcome" class="screen active">
+    <div class="welcome-top">
+      <div class="logo-box">
+        <span style="font-size:24px">🍔</span>
+        <span class="logo-text">버거챌린지</span>
+      </div>
+
+      <canvas id="welcome-canvas" class="welcome-pixel-art" width="50" height="40"></canvas>
+
+      <div class="welcome-msg">
+        <div class="em">어서오세요! 👋</div>
+        <div>아래 버튼을 눌러</div>
+        <div>주문을 시작해주세요</div>
+      </div>
+    </div>
+
+    <div class="welcome-btns">
+      <button class="welcome-btn eat px-btn" onclick="startOrder('매장')">
+        <span class="btn-icon">🪑</span>
+        <span>매장</span>
+        <span class="btn-sub">여기서 드세요</span>
+      </button>
+      <button class="welcome-btn takeout px-btn" onclick="startOrder('포장')">
+        <span class="btn-icon">🛍️</span>
+        <span>포장</span>
+        <span class="btn-sub">가져가세요</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════ DAILY ORDER POPUP ══════════ -->
+  <div class="daily-popup-overlay hidden" id="daily-overlay">
+    <div class="daily-popup">
+      <button class="daily-popup-close px-btn" onclick="closeDailyPopup()">✕ 닫기</button>
+      <div class="daily-title">💡 연습 도우미</div>
+      <div class="daily-head">
+        <span class="daily-star">★</span>
+        오늘의 주문
+        <span class="daily-star">★</span>
+      </div>
+      <div class="daily-menu-text" id="daily-text">로딩중...</div>
+      <div class="daily-hint">👆 위 메뉴를 따라 주문해 보세요!</div>
+    </div>
+  </div>
+
+  <!-- ══════════ SCREEN: MAIN MENU ══════════ -->
+  <div id="screen-main" class="screen">
+    <div class="main-header">
+      <span class="main-logo">🍔 버거챌린지</span>
+      <span class="main-mode-badge" id="mode-badge">매장</span>
+    </div>
+
+    <!-- 오늘의 주문 고정 배너 -->
+    <div id="daily-banner" class="daily-banner hidden">
+      <div class="daily-banner-left">
+        <span class="daily-banner-star">★</span>
+        <span class="daily-banner-label">오늘의 주문</span>
+      </div>
+      <div class="daily-banner-text" id="daily-banner-text"></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active px-btn" onclick="switchTab('추천',this)" data-tab="추천">
+        <span class="tab-icon">⭐</span>추천메뉴
+      </button>
+      <button class="tab px-btn" onclick="switchTab('햄버거',this)" data-tab="햄버거">
+        <span class="tab-icon">🍔</span>햄버거
+      </button>
+      <button class="tab px-btn" onclick="switchTab('디저트',this)" data-tab="디저트">
+        <span class="tab-icon">🍦</span>디저트/치킨
+      </button>
+      <button class="tab px-btn" onclick="switchTab('음료',this)" data-tab="음료">
+        <span class="tab-icon">🥤</span>음료/커피
+      </button>
+    </div>
+
+    <div class="menu-area" id="menu-area"></div>
+
+    <div class="cart-area">
+      <div class="cart-title">🛒 주문 내역 <span id="cart-count" style="color:#fff;background:var(--red);padding:1px 7px;font-size:12px;border:2px solid #000">0</span></div>
+      <div id="cart-list"><div class="cart-empty">담긴 메뉴가 없습니다</div></div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="total-display">합계<br><span id="total-price">0</span>원</div>
+      <button class="cancel-btn px-btn" onclick="cancelOrder()">취소하기</button>
+      <button class="pay-btn px-btn" id="pay-btn" onclick="goToPay()">결제하기</button>
+    </div>
+  </div>
+
+  <!-- SET POPUP -->
+  <div class="overlay hidden" id="set-overlay">
+    <div class="popup-box">
+      <div class="popup-title">🍟 세트로 변경?</div>
+      <div class="popup-body">
+        <span id="set-item-name" class="em">불고기버거</span>를<br>
+        세트로 변경하시겠습니까?<br>
+        <span style="color:var(--gray);font-size:13px">(음료 + 감자튀김 추가)</span><br>
+        <span class="em">+1,000원</span>
+      </div>
+      <div class="popup-btns">
+        <button class="popup-yes px-btn" onclick="setYes()">✅ 예</button>
+        <button class="popup-no px-btn" onclick="setNo()">❌ 아니오</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SCREEN: PAYMENT ══════════ -->
+  <div id="screen-pay" class="screen">
+    <div class="pay-header">💳 결제 방법 선택</div>
+    <div class="pay-body">
+      <div class="pay-total-box">
+        <div class="pay-total-label">결제 금액</div>
+        <div class="pay-total-amt" id="pay-total-display">0원</div>
+      </div>
+      <div class="pay-ask">원하시는 결제 방법을 선택해주세요</div>
+
+      <button class="pay-method-btn px-btn" id="pm-card" onclick="selectPayMethod('card')">
+        <span class="pay-method-icon">💳</span>
+        <div class="pay-method-info">
+          <div class="pay-method-name">카드 결제</div>
+          <div class="pay-method-desc">신용카드 / 체크카드<br>카카오페이, 네이버페이 등 간편결제</div>
+        </div>
+      </button>
+
+      <div class="pay-row">
+        <button class="pay-method-btn px-btn" id="pm-coupon" onclick="selectPayMethod('coupon')" style="flex-direction:column;align-items:center;text-align:center;gap:8px">
+          <span class="pay-method-icon">🎫</span>
+          <div class="pay-method-info">
+            <div class="pay-method-name">디지털쿠폰/<br>교환권</div>
+            <div class="pay-method-desc">제품교환권</div>
+          </div>
+        </button>
+        <button class="pay-method-btn px-btn" id="pm-cash" onclick="selectPayMethod('cash')" style="flex-direction:column;align-items:center;text-align:center;gap:8px">
+          <span class="pay-method-icon">💵</span>
+          <div class="pay-method-info">
+            <div class="pay-method-name">현금</div>
+            <div class="pay-method-desc">주문은 여기서 하시고<br>결제는 카운터에서 해주세요</div>
+          </div>
+        </button>
+      </div>
+
+      <button class="pay-confirm-btn px-btn" onclick="confirmPay()">💰 결제</button>
+    </div>
+    <button class="pay-back px-btn" onclick="goToMain()">← 뒤로가기</button>
+  </div>
+
+  <!-- ══════════ SCREEN: COMPLETE ══════════ -->
+  <div id="screen-complete" class="screen">
+    <div class="complete-icon">🎉</div>
+    <div class="complete-box">
+      <div class="complete-title">주문이 완료되었습니다!</div>
+      <div class="complete-num-label">주문 번호</div>
+      <div class="complete-num" id="order-num">42</div>
+      <div class="complete-sub">
+        주문번호를 기억해 두세요<br>
+        번호가 불리면 수령해 주세요 😊
+      </div>
+    </div>
+    <button class="restart-btn px-btn" onclick="restartApp()">🏠 처음으로 돌아가기</button>
+  </div>
+
+  <!-- WRONG ORDER POPUP -->
+  <div class="wrong-overlay hidden" id="wrong-overlay">
+    <div class="wrong-box">
+      <div class="wrong-icon">❌</div>
+      <div class="wrong-title">주문을 다시 해주세요!</div>
+      <div class="wrong-body">
+        오늘의 주문 메뉴와<br>
+        다르게 담으셨어요.<br>
+        <span style="color:var(--gray);font-size:13px">취소 후 다시 도전해보세요!</span>
+      </div>
+      <button class="wrong-btn px-btn" onclick="closeWrong()">다시 주문하기</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════
+//  PIXEL ART RENDERING
+// ════════════════════════════
+const PALETTE = {
+  _: null, // transparent
+  W: '#f5f5e0', B: '#1a0a2e', K: '#000000',
+  R: '#e84040', O: '#f07030', Y: '#f5c518',
+  G: '#30c060', C: '#30c0c0', U: '#3080e8',
+  P: '#a040c0', N: '#c08050', T: '#80c080',
+  L: '#e8b090', S: '#a0a0a0', E: '#fff0b0',
+  D: '#c06030', M: '#f0a0a0', H: '#ffe0b0',
+  I: '#e0e0e0', X: '#60a0ff', F: '#50d080',
+  Z: '#ff80c0', Q: '#ffb040', V: '#d0b090',
+  J: '#8b4513',
+};
+
+function drawPixelArt(canvas, grid, scale=4) {
+  const rows = grid.length, cols = grid[0].length;
+  canvas.width = cols; canvas.height = rows;
+  canvas.style.width = cols*scale+'px'; canvas.style.height = rows*scale+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  grid.forEach((row,y) => row.split('').forEach((c,x) => {
+    const col = PALETTE[c];
+    if (col) { ctx.fillStyle = col; ctx.fillRect(x,y,1,1); }
+  }));
+}
+
+// ── MENU PIXEL ART DATA ──
+const PIXEL_ART = {
+  '불고기버거': [
+    '___YYYYYYY___',
+    '__YYYYYYYYYYYYY__',
+    '_YYYYYYYYYYYYYYY_',
+    'BBBBBBBBBBBBBBBBB',
+    'NNNLLLLLLLLLLNNNN',
+    'NLLLLLLLLLLLLLLLN',
+    'GGGGGGGGGGGGGGGGG',
+    'RRRRRRRRRRRRRRRRR',
+    'NLLLLLLLLLLLLLLLN',
+    'NNNNNNNNNNNNNNNNN',
+  ],
+  '불갈비버거': [
+    '___RRRRRRR___',
+    '__RRRRRRRRRRRR__',
+    '_RRRRRYYYRRRRRRR_',
+    'BBBBBBBBBBBBBBBBB',
+    'NNNLLLLLLLLLLNNNN',
+    'NLLRRLLLLRRLLLLLN',
+    'GGGGGGGGGGGGGGGGG',
+    'RRRRRRRRRRRRRRRRR',
+    'NLLLLLLLLLLLLLLLN',
+    'NNNNNNNNNNNNNNNNN',
+  ],
+  '치즈버거': [
+    '___YYYYYYY___',
+    '__YYYYYYYYYYYYY__',
+    '_YYYYYYYYYYYYYYY_',
+    'BBBBBBBBBBBBBBBBB',
+    'NNNLLLLLLLLLLNNNN',
+    'NYYYYYYYYYYYYYYYYN',
+    'GGGGGGGGGGGGGGGGG',
+    'RRRRRRRRRRRRRRRRR',
+    'NLLLLLLLLLLLLLLLN',
+    'NNNNNNNNNNNNNNNNN',
+  ],
+  '빙수': [
+    '____CCCCC____',
+    '___CCCCCCCCC___',
+    '__WWWWWWWWWWW__',
+    '_WWWZZWWWWWWWW_',
+    'WWWWWWWWRWWWWWWW',
+    '__UUUUUUUUUUU__',
+    '__UUUUUUUUUUU__',
+    '___BBBBBBBBB___',
+  ],
+  '맵닭버거': [
+    '___YYYYYYY___',
+    '__YYYYYYYYYYYYY__',
+    '_YYYYYYYYYYYYYYY_',
+    'BBBBBBBBBBBBBBBBB',
+    'NNNRRRRRRRRRRNNN',
+    'NRRRRRRRRRRRRRRRN',
+    'GGGGGGGGGGGGGGGGG',
+    'ORRRRRRRRRRRRRRRO',
+    'NLLLLLLLLLLLLLLLN',
+    'NNNNNNNNNNNNNNNNN',
+  ],
+  '크리스피버거': [
+    '___YYYYYYY___',
+    '__YYYYYYYYYYYYY__',
+    '_YYYYYYYYYYYYYYY_',
+    'BBBBBBBBBBBBBBBBB',
+    'NNNIIIIIIIIINNN',
+    'NIIIIIIIIIIIIIIIN',
+    'GGGGGGGGGGGGGGGGG',
+    'WWWWWWWWWWWWWWWWW',
+    'NLLLLLLLLLLLLLLLN',
+    'NNNNNNNNNNNNNNNNN',
+  ],
+  '양념치킨버거': [
+    '___RRRRRRR___',
+    '__RRRRRRRRRRRRR__',
+    '_RRRRRRRRRRRRRRR_',
+    'BBBBBBBBBBBBBBBBB',
+    'NNNRRRRRRRRRRNNN',
+    'NLLLLLLLLLLLLLLLN',
+    'GGGGGGGGGGGGGGGGG',
+    'RRRRRRRRRRRRRRRRR',
+    'NLLLLLLLLLLLLLLLN',
+    'NNNNNNNNNNNNNNNNN',
+  ],
+  '오징어링': [
+    '____IIIII____',
+    '___IIIII_IIIII___',
+    '__III__I_I__III__',
+    '__II___I_I___II__',
+    '__III__I_I__III__',
+    '___IIIII_IIIII___',
+    '____IIIII____',
+    '____NNNNN____',
+  ],
+  '포테이토': [
+    '____YYYYY____',
+    '___YYYYYYY___',
+    '__YYYYYYYYY__',
+    '_YYYYYYYYYYY_',
+    '_YYYYYYYYYYY_',
+    '__YYYYYYYYY__',
+    '____NNNNN____',
+    '____NNNNN____',
+  ],
+  '양념감자': [
+    '____RRRRR____',
+    '___RRRRRRR___',
+    '__RRRRRRRRR__',
+    '_RRRRRRRRRRR_',
+    '_RRRRRRRRRRR_',
+    '__RRRRRRRRR__',
+    '____NNNNN____',
+    '____NNNNN____',
+  ],
+  '해쉬브라운': [
+    '_____________',
+    '__DDDDDDDDD__',
+    '_DNDNDNDNDND_',
+    '_DDDDDDDDDDD_',
+    '_DNDNDNDNDND_',
+    '_DDDDDDDDDDD_',
+    '__DDDDDDDDD__',
+    '_____________',
+  ],
+  '소프트콘 아이스크림': [
+    '____ZZZZZ____',
+    '___ZZZZZZZZZ___',
+    '__ZZZZZZZZZZZ__',
+    '___ZZWWWWZZZ___',
+    '____WWWWWWW____',
+    '_____NYNYN_____',
+    '______NYN______',
+    '_______N_______',
+  ],
+  '콜라': [
+    '___KKKKK___',
+    '__KKWWWKK__',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '__KKKKKKK__',
+  ],
+  '사이다': [
+    '___KKKKK___',
+    '__KKWWWKK__',
+    '_KWWWWWWWK_',
+    '_KWCWWWWWK_',
+    '_KWWWWWWWK_',
+    '_KWWWCWWWK_',
+    '_KWWWWWWWK_',
+    '_KWWWWWWWK_',
+    '__KKKKKKK__',
+  ],
+  '제로콜라': [
+    '___KKKKK___',
+    '__KKWWWKK__',
+    '_KBBBBBBBK_',
+    '_KBWBBBWBK_',
+    '_KBBBBBBBK_',
+    '_KBWBBBWBK_',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '__KKKKKKK__',
+  ],
+  '오렌지주스': [
+    '___KKKKK___',
+    '__KKWWWKK__',
+    '_KOOOOOOOOK_',
+    '_KOOOOOOOOK_',
+    '_KOOOOOOOOK_',
+    '_KOOOOOOOOK_',
+    '_KOOOOOOOOK_',
+    '_KOOOOOOOOK_',
+    '__KKKKKKK__',
+  ],
+  '아메리카노': [
+    '___KKKKK___',
+    '__KKWWWKK__',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '_KBBBBBBBK_',
+    '__KKKKKKK__',
+    '______K____',
+    '_____KKK___',
+  ],
+  '라떼': [
+    '___KKKKK___',
+    '__KKWWWKK__',
+    '_KHHHHHHHHK_',
+    '_KHNNHHHHK_',
+    '_KHHHHHHHK_',
+    '_KHHHHHHHK_',
+    '_KHHHHHHHK_',
+    '_KHHHHHHHK_',
+    '__KKKKKKK__',
+    '______K____',
+    '_____KKK___',
+  ],
+};
+
+function getArt(name) {
+  if (PIXEL_ART[name]) return PIXEL_ART[name];
+  // fallback square
+  return ['KKKKK','KWWWK','KWYWK','KWWWK','KKKKK'];
+}
+
+// ════════════════════════════
+//  DATA
+// ════════════════════════════
+const MENUS = {
+  추천: [
+    {name:'불고기버거', price:5300, isBurger:true},
+    {name:'불갈비버거', price:5600, isBurger:true},
+    {name:'치즈버거', price:5200, isBurger:true},
+    {name:'빙수', price:4200, isBurger:false},
+    {name:'오징어링', price:2500, isBurger:false},
+    {name:'양념감자', price:2400, isBurger:false},
+  ],
+  햄버거: [
+    {name:'불고기버거', price:5300, isBurger:true},
+    {name:'불갈비버거', price:5600, isBurger:true},
+    {name:'치즈버거', price:5200, isBurger:true},
+    {name:'맵닭버거', price:6300, isBurger:true},
+    {name:'크리스피버거', price:7000, isBurger:true},
+    {name:'양념치킨버거', price:6400, isBurger:true},
+  ],
+  디저트: [
+    {name:'빙수', price:4200, isBurger:false},
+    {name:'포테이토', price:2000, isBurger:false},
+    {name:'양념감자', price:2400, isBurger:false},
+    {name:'오징어링', price:2500, isBurger:false},
+    {name:'해쉬브라운', price:3000, isBurger:false},
+    {name:'소프트콘 아이스크림', price:1500, isBurger:false},
+  ],
+  음료: [
+    {name:'콜라', price:3000, isBurger:false},
+    {name:'사이다', price:3000, isBurger:false},
+    {name:'제로콜라', price:3000, isBurger:false},
+    {name:'오렌지주스', price:4000, isBurger:false},
+    {name:'아메리카노', price:3300, isBurger:false},
+    {name:'라떼', price:3600, isBurger:false},
+  ],
+};
+
+const DAILY_ORDERS = [
+  '🍔 불고기버거 세트\n🍦 소프트콘 아이스크림',
+  '🍔 치즈버거\n🦑 오징어링\n🧊 빙수',
+  '🍔 불갈비버거 세트\n🥔 양념감자\n🟫 해쉬브라운',
+];
+
+// ════════════════════════════
+//  STATE
+// ════════════════════════════
+let orderMode = '매장';
+let currentTab = '추천';
+let cart = []; // [{name, price, isSet}]
+let pendingItem = null;
+let selectedPayMethod = null;
+let dailyOrderIdx = 0;
+
+// ════════════════════════════
+//  INIT
+// ════════════════════════════
+window.onload = () => {
+  drawWelcome();
+  dailyOrderIdx = Math.floor(Math.random() * DAILY_ORDERS.length);
+};
+
+function drawWelcome() {
+  const c = document.getElementById('welcome-canvas');
+  // simple restaurant scene
+  const scene = [
+    '__KKKKKKKKKKKKKK__',
+    '_KRRRRRRRRRRRRRRK_',
+    '_KRRRRRRRRRRRRRRK_',
+    '_KKKKKKKKKKKKKKKK_',
+    '__KKWWWKKWWWKK____',
+    '__KWWWWKWWWWWK____',
+    '__KWWWWKWWWWWK____',
+    '__KKKKKKKKKKKKK___',
+    'GGGGGGGGGGGGGGGGGG',
+    'GGGGGGGGGGGGGGGGGG',
+  ];
+  drawPixelArt(c, scene, 8);
+}
+
+// ════════════════════════════
+//  SCREEN NAVIGATION
+// ════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startOrder(mode) {
+  orderMode = mode;
+  document.getElementById('mode-badge').textContent = mode;
+  cart = [];
+  currentTab = '추천';
+  renderMenu('추천');
+  renderCart();
+  showScreen('screen-main');
+  // reset tabs
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === '추천');
+  });
+  // reset daily banner
+  document.getElementById('daily-banner').classList.add('hidden');
+  // show daily popup
+  showDailyPopup();
+}
+
+function goToPay() {
+  if (cart.length === 0) return;
+  // check wrong order
+  const dailyText = DAILY_ORDERS[dailyOrderIdx];
+  const check = checkDailyOrder();
+  if (!check) {
+    showWrong(); return;
+  }
+  selectedPayMethod = null;
+  document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('pay-total-display').textContent = formatPrice(getTotal()) + '원';
+  showScreen('screen-pay');
+}
+
+function goToMain() {
+  showScreen('screen-main');
+}
+
+function cancelOrder() {
+  cart = [];
+  renderCart();
+  showScreen('screen-welcome');
+}
+
+function restartApp() {
+  cart = [];
+  showScreen('screen-welcome');
+}
+
+// ════════════════════════════
+//  DAILY ORDER
+// ════════════════════════════
+function showDailyPopup() {
+  dailyOrderIdx = Math.floor(Math.random() * DAILY_ORDERS.length);
+  document.getElementById('daily-text').textContent = DAILY_ORDERS[dailyOrderIdx];
+  document.getElementById('daily-overlay').classList.remove('hidden');
+}
+function closeDailyPopup() {
+  document.getElementById('daily-overlay').classList.add('hidden');
+  // 배너에 오늘의 주문 텍스트 고정 표시
+  const rawText = DAILY_ORDERS[dailyOrderIdx];
+  document.getElementById('daily-banner-text').textContent = rawText;
+  document.getElementById('daily-banner').classList.remove('hidden');
+}
+
+// simple check: does cart contain keywords from daily order?
+function checkDailyOrder() {
+  const daily = DAILY_ORDERS[dailyOrderIdx];
+  const cartNames = cart.map(i => i.name + (i.isSet ? ' 세트' : ''));
+  if (daily.includes('불고기버거 세트') && !cart.some(i => i.name === '불고기버거' && i.isSet)) return false;
+  if (daily.includes('불갈비버거 세트') && !cart.some(i => i.name === '불갈비버거' && i.isSet)) return false;
+  if (daily.includes('치즈버거') && !daily.includes('세트') && !cart.some(i => i.name === '치즈버거')) return false;
+  return true; // lenient: pass if burger condition met
+}
+
+// ════════════════════════════
+//  TABS & MENU
+// ════════════════════════════
+function switchTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderMenu(tab);
+}
+
+function renderMenu(tab) {
+  const area = document.getElementById('menu-area');
+  area.innerHTML = '';
+  const items = MENUS[tab] || [];
+  items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'menu-card';
+    const cnv = document.createElement('canvas');
+    card.appendChild(cnv);
+    const nm = document.createElement('div');
+    nm.className = 'menu-name';
+    nm.textContent = item.name;
+    const pr = document.createElement('div');
+    pr.className = 'menu-price';
+    pr.textContent = formatPrice(item.price) + '원';
+    const btn = document.createElement('button');
+    btn.className = 'menu-add-btn px-btn';
+    btn.textContent = '+ 담기';
+    btn.onclick = () => addItem(item);
+    card.appendChild(nm);
+    card.appendChild(pr);
+    card.appendChild(btn);
+    area.appendChild(card);
+    // draw art
+    drawPixelArt(cnv, getArt(item.name), 5);
+  });
+}
+
+// ════════════════════════════
+//  CART
+// ════════════════════════════
+function addItem(item) {
+  if (item.isBurger) {
+    pendingItem = item;
+    document.getElementById('set-item-name').textContent = item.name;
+    document.getElementById('set-overlay').classList.remove('hidden');
+  } else {
+    pushToCart(item.name, item.price, false);
+  }
+}
+
+function setYes() {
+  if (!pendingItem) return;
+  pushToCart(pendingItem.name, pendingItem.price + 1000, true);
+  pendingItem = null;
+  document.getElementById('set-overlay').classList.add('hidden');
+}
+function setNo() {
+  if (!pendingItem) return;
+  pushToCart(pendingItem.name, pendingItem.price, false);
+  pendingItem = null;
+  document.getElementById('set-overlay').classList.add('hidden');
+}
+
+function pushToCart(name, price, isSet) {
+  const label = name + (isSet ? ' 세트' : '');
+  const existing = cart.find(i => i.label === label);
+  if (existing) { existing.qty++; existing.totalPrice += price; }
+  else cart.push({label, name, price, isSet, qty:1, totalPrice:price});
+  renderCart();
+}
+
+function removeFromCart(label) {
+  cart = cart.filter(i => i.label !== label);
+  renderCart();
+}
+
+function renderCart() {
+  const list = document.getElementById('cart-list');
+  const count = document.getElementById('cart-count');
+  const total = document.getElementById('total-price');
+  const payBtn = document.getElementById('pay-btn');
+  const t = getTotal();
+  total.textContent = formatPrice(t);
+  count.textContent = cart.reduce((s,i)=>s+i.qty,0);
+  payBtn.disabled = cart.length === 0;
+  if (cart.length === 0) {
+    list.innerHTML = '<div class="cart-empty">담긴 메뉴가 없습니다</div>';
+    return;
+  }
+  list.innerHTML = '';
+  cart.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'cart-item';
+    row.innerHTML = `
+      <span class="cart-item-name">${item.label}</span>
+      <span class="cart-item-qty">x${item.qty}</span>
+      <span class="cart-item-price">${formatPrice(item.totalPrice)}원</span>
+      <button class="cart-item-del px-btn" onclick="removeFromCart('${item.label}')">삭제</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function getTotal() {
+  return cart.reduce((s,i) => s + i.totalPrice, 0);
+}
+
+// ════════════════════════════
+//  PAYMENT
+// ════════════════════════════
+function selectPayMethod(m) {
+  selectedPayMethod = m;
+  document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('pm-'+m).classList.add('selected');
+}
+
+function confirmPay() {
+  if (!selectedPayMethod) {
+    alert('결제 방법을 선택해 주세요!');
+    return;
+  }
+  const num = Math.floor(Math.random()*900)+100;
+  document.getElementById('order-num').textContent = num;
+  showScreen('screen-complete');
+  dailyOrderIdx = Math.floor(Math.random() * DAILY_ORDERS.length);
+}
+
+// ════════════════════════════
+//  WRONG ORDER
+// ════════════════════════════
+function showWrong() {
+  document.getElementById('wrong-overlay').classList.remove('hidden');
+}
+function closeWrong() {
+  document.getElementById('wrong-overlay').classList.add('hidden');
+}
+
+// ════════════════════════════
+//  UTILS
+// ════════════════════════════
+function formatPrice(n) {
+  return n.toLocaleString('ko-KR');
+}
+</script>
+</body>
+</html>
