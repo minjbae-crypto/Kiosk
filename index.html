@@ -1,0 +1,1501 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;html lang="ko"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</p>
+<p class="p1">&lt;title&gt;키오스크 연습 - 버거챌린지&lt;/title&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>@import url('https://fonts.googleapis.com/css2?family=Galmuri11&amp;display=swap');</p>
+<p class="p2"><br></p>
+<p class="p1">:root {</p>
+<p class="p1">–pixel: 4px;</p>
+<p class="p1">–bg: #1a0a2e;</p>
+<p class="p1">–bg2: #2d1b4e;</p>
+<p class="p1">–panel: #1e1040;</p>
+<p class="p1">–gold: #f5c518;</p>
+<p class="p1">–gold2: #e8a800;</p>
+<p class="p1">–red: #e84040;</p>
+<p class="p1">–red2: #b02020;</p>
+<p class="p1">–green: #30c060;</p>
+<p class="p1">–green2: #1a8040;</p>
+<p class="p1">–blue: #3080e8;</p>
+<p class="p1">–blue2: #1050a0;</p>
+<p class="p1">–white: #f0e8d0;</p>
+<p class="p1">–gray: #8070a0;</p>
+<p class="p1">–gray2: #5040608;</p>
+<p class="p1">–border: #6040a0;</p>
+<p class="p1">–tab-active: #f5c518;</p>
+<p class="p1">–tab-bg: #3a2060;</p>
+<p class="p1">–card-bg: #2a1555;</p>
+<p class="p1">–card-border: #7050c0;</p>
+<p class="p1">–pixel-shadow: 4px 4px 0 #000;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">- { box-sizing: border-box; margin: 0; padding: 0; }</p>
+<p class="p2"><br></p>
+<p class="p1">body {</p>
+<p class="p1">font-family: ‘Galmuri11’, monospace, sans-serif;</p>
+<p class="p1">background: var(–bg);</p>
+<p class="p1">display: flex;</p>
+<p class="p1">justify-content: center;</p>
+<p class="p1">align-items: flex-start;</p>
+<p class="p1">min-height: 100vh;</p>
+<p class="p1">padding: 0;</p>
+<p class="p1">image-rendering: pixelated;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#app {</p>
+<p class="p1">width: 390px;</p>
+<p class="p1">min-height: 100vh;</p>
+<p class="p1">background: var(–bg);</p>
+<p class="p1">position: relative;</p>
+<p class="p1">overflow: hidden;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">flex-direction: column;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* ───── PIXEL UTILITIES ───── */</p>
+<p class="p1">.px-border {</p>
+<p class="p1">border: 4px solid;</p>
+<p class="p1">image-rendering: pixelated;</p>
+<p class="p1">}</p>
+<p class="p1">.px-btn {</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">image-rendering: pixelated;</p>
+<p class="p1">transition: transform 0.05s;</p>
+<p class="p1">user-select: none;</p>
+<p class="p1">-webkit-tap-highlight-color: transparent;</p>
+<p class="p1">}</p>
+<p class="p1">.px-btn:active { transform: translate(2px, 2px); }</p>
+<p class="p2"><br></p>
+<p class="p1">/* ─── SCANLINE OVERLAY ─── */</p>
+<p class="p1">#app::after {</p>
+<p class="p1">content: ‘’;</p>
+<p class="p1">position: fixed;</p>
+<p class="p1">inset: 0;</p>
+<p class="p1">width: 390px;</p>
+<p class="p1">background: repeating-linear-gradient(</p>
+<p class="p1">0deg,</p>
+<p class="p1">rgba(0,0,0,0.07) 0px,</p>
+<p class="p1">rgba(0,0,0,0.07) 1px,</p>
+<p class="p1">transparent 1px,</p>
+<p class="p1">transparent 4px</p>
+<p class="p1">);</p>
+<p class="p1">pointer-events: none;</p>
+<p class="p1">z-index: 9999;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* ─── SCREENS ─── */</p>
+<p class="p1">.screen { display: none; flex-direction: column; flex: 1; }</p>
+<p class="p1">.screen.active { display: flex; }</p>
+<p class="p2"><br></p>
+<p class="p1">/* ════════════════════════════</p>
+<p class="p1">SCREEN 1: WELCOME</p>
+<p class="p1">════════════════════════════ */</p>
+<p class="p1">#screen-welcome {</p>
+<p class="p1">background: var(–bg);</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">justify-content: space-between;</p>
+<p class="p1">padding: 30px 20px 40px;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.welcome-top {</p>
+<p class="p1">width: 100%;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">flex-direction: column;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">gap: 20px;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.logo-box {</p>
+<p class="p1">background: var(–gold);</p>
+<p class="p1">border: 4px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">padding: 12px 28px;</p>
+<p class="p1">display: inline-flex;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">gap: 10px;</p>
+<p class="p1">}</p>
+<p class="p1">.logo-text {</p>
+<p class="p1">font-size: 28px;</p>
+<p class="p1">color: #1a0a2e;</p>
+<p class="p1">letter-spacing: -1px;</p>
+<p class="p1">line-height: 1;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.welcome-pixel-art {</p>
+<p class="p1">width: 200px;</p>
+<p class="p1">height: 160px;</p>
+<p class="p1">image-rendering: pixelated;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.welcome-msg {</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">color: var(–white);</p>
+<p class="p1">font-size: 18px;</p>
+<p class="p1">line-height: 1.8;</p>
+<p class="p1">background: #2d1b4e;</p>
+<p class="p1">border: 3px solid var(–border);</p>
+<p class="p1">padding: 16px 20px;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">width: 100%;</p>
+<p class="p1">}</p>
+<p class="p1">.welcome-msg .em { color: var(–gold); font-size: 20px; }</p>
+<p class="p2"><br></p>
+<p class="p1">.welcome-btns {</p>
+<p class="p1">display: flex;</p>
+<p class="p1">gap: 16px;</p>
+<p class="p1">width: 100%;</p>
+<p class="p1">}</p>
+<p class="p1">.welcome-btn {</p>
+<p class="p1">flex: 1;</p>
+<p class="p1">padding: 24px 10px;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 26px;</p>
+<p class="p1">border: 4px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">display: flex;</p>
+<p class="p1">flex-direction: column;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">gap: 8px;</p>
+<p class="p1">letter-spacing: -0.5px;</p>
+<p class="p1">}</p>
+<p class="p1">.welcome-btn.eat {</p>
+<p class="p1">background: var(–gold);</p>
+<p class="p1">color: #1a0a2e;</p>
+<p class="p1">}</p>
+<p class="p1">.welcome-btn.takeout {</p>
+<p class="p1">background: var(–red);</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">}</p>
+<p class="p1">.welcome-btn .btn-icon { font-size: 36px; }</p>
+<p class="p1">.welcome-btn .btn-sub { font-size: 13px; opacity: 0.8; }</p>
+<p class="p2"><br></p>
+<p class="p1">/* ════════════════════════════</p>
+<p class="p1">DAILY ORDER POPUP</p>
+<p class="p1">════════════════════════════ */</p>
+<p class="p1">.daily-popup-overlay {</p>
+<p class="p1">position: fixed;</p>
+<p class="p1">inset: 0;</p>
+<p class="p1">width: 390px;</p>
+<p class="p1">background: rgba(0,0,0,0.7);</p>
+<p class="p1">z-index: 500;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">align-items: flex-start;</p>
+<p class="p1">justify-content: center;</p>
+<p class="p1">padding-top: 60px;</p>
+<p class="p1">}</p>
+<p class="p1">.daily-popup-overlay.hidden { display: none; }</p>
+<p class="p2"><br></p>
+<p class="p1">.daily-popup {</p>
+<p class="p1">width: 340px;</p>
+<p class="p1">background: #2d1b4e;</p>
+<p class="p1">border: 4px solid var(–gold);</p>
+<p class="p1">box-shadow: 6px 6px 0 #000;</p>
+<p class="p1">padding: 20px;</p>
+<p class="p1">position: relative;</p>
+<p class="p1">animation: popIn 0.2s steps(3) forwards;</p>
+<p class="p1">}</p>
+<p class="p1">@keyframes popIn {</p>
+<p class="p1">from { transform: scale(0.8); opacity: 0; }</p>
+<p class="p1">to { transform: scale(1); opacity: 1; }</p>
+<p class="p1">}</p>
+<p class="p1">.daily-popup-close {</p>
+<p class="p1">position: absolute;</p>
+<p class="p1">top: 8px; right: 8px;</p>
+<p class="p1">background: var(–red);</p>
+<p class="p1">border: 3px solid #000;</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 14px;</p>
+<p class="p1">padding: 2px 8px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">}</p>
+<p class="p1">.daily-title {</p>
+<p class="p1">font-size: 14px;</p>
+<p class="p1">color: var(–gray);</p>
+<p class="p1">margin-bottom: 4px;</p>
+<p class="p1">}</p>
+<p class="p1">.daily-head {</p>
+<p class="p1">font-size: 22px;</p>
+<p class="p1">color: var(–gold);</p>
+<p class="p1">margin-bottom: 12px;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">gap: 8px;</p>
+<p class="p1">}</p>
+<p class="p1">.daily-star { font-size: 18px; animation: blink 1s step-end infinite; }</p>
+<p class="p1">@keyframes blink { 50% { opacity: 0; } }</p>
+<p class="p1">.daily-menu-text {</p>
+<p class="p1">background: #1a0a2e;</p>
+<p class="p1">border: 3px solid var(–border);</p>
+<p class="p1">padding: 14px;</p>
+<p class="p1">color: var(–white);</p>
+<p class="p1">font-size: 17px;</p>
+<p class="p1">line-height: 1.8;</p>
+<p class="p1">margin-bottom: 14px;</p>
+<p class="p1">}</p>
+<p class="p1">.daily-hint {</p>
+<p class="p1">font-size: 13px;</p>
+<p class="p1">color: var(–gray);</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">border-top: 2px dashed var(–border);</p>
+<p class="p1">padding-top: 10px;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* ════════════════════════════</p>
+<p class="p1">SCREEN 2: MAIN MENU</p>
+<p class="p1">════════════════════════════ */</p>
+<p class="p1">#screen-main {</p>
+<p class="p1">background: var(–bg);</p>
+<p class="p1">flex: 1;</p>
+<p class="p1">overflow: hidden;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* Header */</p>
+<p class="p1">.main-header {</p>
+<p class="p1">background: #000;</p>
+<p class="p1">border-bottom: 4px solid var(–gold);</p>
+<p class="p1">padding: 10px 14px;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">justify-content: space-between;</p>
+<p class="p1">flex-shrink: 0;</p>
+<p class="p1">}</p>
+<p class="p1">.main-logo { color: var(–gold); font-size: 18px; }</p>
+<p class="p1">.main-mode-badge {</p>
+<p class="p1">background: var(–red);</p>
+<p class="p1">border: 3px solid #000;</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-size: 13px;</p>
+<p class="p1">padding: 3px 10px;</p>
+<p class="p1">box-shadow: 2px 2px 0 #000;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* Tabs */</p>
+<p class="p1">.tabs {</p>
+<p class="p1">display: flex;</p>
+<p class="p1">background: #0d0020;</p>
+<p class="p1">border-bottom: 4px solid #000;</p>
+<p class="p1">flex-shrink: 0;</p>
+<p class="p1">}</p>
+<p class="p1">.tab {</p>
+<p class="p1">flex: 1;</p>
+<p class="p1">padding: 10px 4px;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 12px;</p>
+<p class="p1">color: var(–gray);</p>
+<p class="p1">background: var(–tab-bg);</p>
+<p class="p1">border: none;</p>
+<p class="p1">border-right: 3px solid #000;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">line-height: 1.4;</p>
+<p class="p1">transition: background 0.1s;</p>
+<p class="p1">}</p>
+<p class="p1">.tab:last-child { border-right: none; }</p>
+<p class="p1">.tab.active {</p>
+<p class="p1">background: var(–gold);</p>
+<p class="p1">color: #1a0a2e;</p>
+<p class="p1">font-size: 13px;</p>
+<p class="p1">}</p>
+<p class="p1">.tab-icon { font-size: 16px; display: block; margin-bottom: 2px; }</p>
+<p class="p2"><br></p>
+<p class="p1">/* Menu grid */</p>
+<p class="p1">.menu-area {</p>
+<p class="p1">flex: 1;</p>
+<p class="p1">overflow-y: auto;</p>
+<p class="p1">padding: 10px;</p>
+<p class="p1">display: grid;</p>
+<p class="p1">grid-template-columns: 1fr 1fr;</p>
+<p class="p1">gap: 10px;</p>
+<p class="p1">align-content: start;</p>
+<p class="p1">max-height: calc(100vh - 310px);</p>
+<p class="p1">}</p>
+<p class="p1">.menu-area::-webkit-scrollbar { width: 6px; }</p>
+<p class="p1">.menu-area::-webkit-scrollbar-track { background: #1a0a2e; }</p>
+<p class="p1">.menu-area::-webkit-scrollbar-thumb { background: var(–border); }</p>
+<p class="p2"><br></p>
+<p class="p1">.menu-card {</p>
+<p class="p1">background: var(–card-bg);</p>
+<p class="p1">border: 3px solid var(–card-border);</p>
+<p class="p1">box-shadow: 3px 3px 0 #000;</p>
+<p class="p1">padding: 10px;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">flex-direction: column;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">gap: 6px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">transition: transform 0.05s;</p>
+<p class="p1">}</p>
+<p class="p1">.menu-card:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }</p>
+<p class="p1">.menu-card canvas {</p>
+<p class="p1">image-rendering: pixelated;</p>
+<p class="p1">width: 80px;</p>
+<p class="p1">height: 80px;</p>
+<p class="p1">}</p>
+<p class="p1">.menu-name {</p>
+<p class="p1">color: var(–white);</p>
+<p class="p1">font-size: 13px;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">line-height: 1.3;</p>
+<p class="p1">}</p>
+<p class="p1">.menu-price {</p>
+<p class="p1">color: var(–gold);</p>
+<p class="p1">font-size: 15px;</p>
+<p class="p1">font-weight: bold;</p>
+<p class="p1">}</p>
+<p class="p1">.menu-add-btn {</p>
+<p class="p1">background: var(–green);</p>
+<p class="p1">border: 3px solid #000;</p>
+<p class="p1">box-shadow: 2px 2px 0 #000;</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 13px;</p>
+<p class="p1">padding: 4px 14px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">width: 100%;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">}</p>
+<p class="p1">.menu-add-btn:active { transform: translate(2px,2px); box-shadow: none; }</p>
+<p class="p2"><br></p>
+<p class="p1">/* Cart */</p>
+<p class="p1">.cart-area {</p>
+<p class="p1">background: #0d0020;</p>
+<p class="p1">border-top: 4px solid var(–border);</p>
+<p class="p1">padding: 8px 10px 4px;</p>
+<p class="p1">flex-shrink: 0;</p>
+<p class="p1">min-height: 80px;</p>
+<p class="p1">max-height: 120px;</p>
+<p class="p1">overflow-y: auto;</p>
+<p class="p1">}</p>
+<p class="p1">.cart-area::-webkit-scrollbar { width: 4px; }</p>
+<p class="p1">.cart-area::-webkit-scrollbar-thumb { background: var(–border); }</p>
+<p class="p1">.cart-title {</p>
+<p class="p1">color: var(–gold);</p>
+<p class="p1">font-size: 13px;</p>
+<p class="p1">margin-bottom: 4px;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">gap: 6px;</p>
+<p class="p1">}</p>
+<p class="p1">.cart-empty { color: var(–gray); font-size: 13px; text-align: center; padding: 8px; }</p>
+<p class="p1">.cart-item {</p>
+<p class="p1">display: flex;</p>
+<p class="p1">justify-content: space-between;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">color: var(–white);</p>
+<p class="p1">font-size: 13px;</p>
+<p class="p1">padding: 3px 0;</p>
+<p class="p1">border-bottom: 1px dashed #3a2060;</p>
+<p class="p1">}</p>
+<p class="p1">.cart-item-name { flex: 1; }</p>
+<p class="p1">.cart-item-qty {</p>
+<p class="p1">color: var(–gold);</p>
+<p class="p1">margin: 0 8px;</p>
+<p class="p1">}</p>
+<p class="p1">.cart-item-price { color: var(–white); min-width: 60px; text-align: right; }</p>
+<p class="p1">.cart-item-del {</p>
+<p class="p1">background: var(–red);</p>
+<p class="p1">border: 2px solid #000;</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 11px;</p>
+<p class="p1">padding: 1px 6px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">margin-left: 6px;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* Bottom bar */</p>
+<p class="p1">.bottom-bar {</p>
+<p class="p1">background: #000;</p>
+<p class="p1">border-top: 4px solid var(–gold);</p>
+<p class="p1">padding: 10px 14px;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">gap: 10px;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">flex-shrink: 0;</p>
+<p class="p1">}</p>
+<p class="p1">.total-display {</p>
+<p class="p1">flex: 1;</p>
+<p class="p1">color: var(–gold);</p>
+<p class="p1">font-size: 16px;</p>
+<p class="p1">}</p>
+<p class="p1">.total-display span { font-size: 20px; }</p>
+<p class="p1">.cancel-btn {</p>
+<p class="p1">background: var(–gray);</p>
+<p class="p1">border: 3px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 15px;</p>
+<p class="p1">padding: 10px 16px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">}</p>
+<p class="p1">.pay-btn {</p>
+<p class="p1">background: var(–red);</p>
+<p class="p1">border: 3px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 15px;</p>
+<p class="p1">padding: 10px 20px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">}</p>
+<p class="p1">.pay-btn:disabled { background: var(–gray); cursor: not-allowed; }</p>
+<p class="p2"><br></p>
+<p class="p1">/* ════════════════════════════</p>
+<p class="p1">POPUP: SET UPGRADE</p>
+<p class="p1">════════════════════════════ */</p>
+<p class="p1">.overlay {</p>
+<p class="p1">position: fixed;</p>
+<p class="p1">inset: 0;</p>
+<p class="p1">width: 390px;</p>
+<p class="p1">background: rgba(0,0,0,0.75);</p>
+<p class="p1">z-index: 400;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">justify-content: center;</p>
+<p class="p1">}</p>
+<p class="p1">.overlay.hidden { display: none; }</p>
+<p class="p1">.popup-box {</p>
+<p class="p1">width: 320px;</p>
+<p class="p1">background: #2d1b4e;</p>
+<p class="p1">border: 4px solid var(–gold);</p>
+<p class="p1">box-shadow: 6px 6px 0 #000;</p>
+<p class="p1">padding: 24px 20px 20px;</p>
+<p class="p1">animation: popIn 0.15s steps(2) forwards;</p>
+<p class="p1">}</p>
+<p class="p1">.popup-title {</p>
+<p class="p1">font-size: 18px;</p>
+<p class="p1">color: var(–gold);</p>
+<p class="p1">margin-bottom: 8px;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">}</p>
+<p class="p1">.popup-body {</p>
+<p class="p1">font-size: 15px;</p>
+<p class="p1">color: var(–white);</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">line-height: 1.8;</p>
+<p class="p1">margin-bottom: 20px;</p>
+<p class="p1">}</p>
+<p class="p1">.popup-body .em { color: var(–gold); }</p>
+<p class="p1">.popup-btns {</p>
+<p class="p1">display: flex;</p>
+<p class="p1">gap: 12px;</p>
+<p class="p1">}</p>
+<p class="p1">.popup-yes {</p>
+<p class="p1">flex: 1;</p>
+<p class="p1">background: var(–green);</p>
+<p class="p1">border: 4px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 18px;</p>
+<p class="p1">padding: 12px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">}</p>
+<p class="p1">.popup-no {</p>
+<p class="p1">flex: 1;</p>
+<p class="p1">background: var(–gray);</p>
+<p class="p1">border: 4px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 18px;</p>
+<p class="p1">padding: 12px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* ════════════════════════════</p>
+<p class="p1">SCREEN 3: PAYMENT</p>
+<p class="p1">════════════════════════════ */</p>
+<p class="p1">#screen-pay {</p>
+<p class="p1">background: var(–bg);</p>
+<p class="p1">padding: 0;</p>
+<p class="p1">}</p>
+<p class="p1">.pay-header {</p>
+<p class="p1">background: #000;</p>
+<p class="p1">border-bottom: 4px solid var(–gold);</p>
+<p class="p1">padding: 14px;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">color: var(–gold);</p>
+<p class="p1">font-size: 20px;</p>
+<p class="p1">flex-shrink: 0;</p>
+<p class="p1">}</p>
+<p class="p1">.pay-body {</p>
+<p class="p1">flex: 1;</p>
+<p class="p1">padding: 20px 16px;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">flex-direction: column;</p>
+<p class="p1">gap: 14px;</p>
+<p class="p1">}</p>
+<p class="p1">.pay-total-box {</p>
+<p class="p1">background: #0d0020;</p>
+<p class="p1">border: 3px solid var(–border);</p>
+<p class="p1">padding: 14px;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">}</p>
+<p class="p1">.pay-total-label { color: var(–gray); font-size: 14px; margin-bottom: 4px; }</p>
+<p class="p1">.pay-total-amt { color: var(–gold); font-size: 28px; }</p>
+<p class="p1">.pay-ask { color: var(–white); font-size: 16px; text-align: center; margin: 4px 0; }</p>
+<p class="p1">.pay-method-btn {</p>
+<p class="p1">background: var(–card-bg);</p>
+<p class="p1">border: 3px solid var(–card-border);</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">padding: 16px 18px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">gap: 16px;</p>
+<p class="p1">transition: transform 0.05s;</p>
+<p class="p1">}</p>
+<p class="p1">.pay-method-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }</p>
+<p class="p1">.pay-method-btn.selected {</p>
+<p class="p1">border-color: var(–gold);</p>
+<p class="p1">background: #3a2060;</p>
+<p class="p1">}</p>
+<p class="p1">.pay-method-icon { font-size: 32px; flex-shrink: 0; }</p>
+<p class="p1">.pay-method-info { flex: 1; }</p>
+<p class="p1">.pay-method-name { color: var(–white); font-size: 17px; margin-bottom: 3px; }</p>
+<p class="p1">.pay-method-desc { color: var(–gray); font-size: 12px; line-height: 1.5; }</p>
+<p class="p1">.pay-row { display: flex; gap: 12px; }</p>
+<p class="p1">.pay-row .pay-method-btn { flex: 1; flex-direction: column; align-items: center; text-align: center; gap: 8px; }</p>
+<p class="p1">.pay-confirm-btn {</p>
+<p class="p1">background: var(–red);</p>
+<p class="p1">border: 4px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 22px;</p>
+<p class="p1">padding: 16px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">margin-top: auto;</p>
+<p class="p1">}</p>
+<p class="p1">.pay-back {</p>
+<p class="p1">background: var(–gray);</p>
+<p class="p1">border: 4px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 16px;</p>
+<p class="p1">padding: 10px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">margin: 0 16px 8px;</p>
+<p class="p1">flex-shrink: 0;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* ════════════════════════════</p>
+<p class="p1">SCREEN 4: COMPLETE</p>
+<p class="p1">════════════════════════════ */</p>
+<p class="p1">#screen-complete {</p>
+<p class="p1">background: var(–bg);</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">justify-content: center;</p>
+<p class="p1">padding: 40px 24px;</p>
+<p class="p1">gap: 24px;</p>
+<p class="p1">}</p>
+<p class="p1">.complete-icon { font-size: 80px; animation: bounce 0.6s steps(3) infinite alternate; }</p>
+<p class="p1">@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-12px); } }</p>
+<p class="p1">.complete-box {</p>
+<p class="p1">background: #2d1b4e;</p>
+<p class="p1">border: 4px solid var(–green);</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">padding: 24px;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">width: 100%;</p>
+<p class="p1">}</p>
+<p class="p1">.complete-title {</p>
+<p class="p1">color: var(–green);</p>
+<p class="p1">font-size: 24px;</p>
+<p class="p1">margin-bottom: 12px;</p>
+<p class="p1">}</p>
+<p class="p1">.complete-num-label { color: var(–gray); font-size: 13px; }</p>
+<p class="p1">.complete-num { color: var(–gold); font-size: 36px; margin: 4px 0 12px; }</p>
+<p class="p1">.complete-sub { color: var(–white); font-size: 15px; line-height: 1.8; }</p>
+<p class="p1">.complete-pixel-row {</p>
+<p class="p1">display: flex;</p>
+<p class="p1">gap: 10px;</p>
+<p class="p1">justify-content: center;</p>
+<p class="p1">}</p>
+<p class="p1">.restart-btn {</p>
+<p class="p1">background: var(–gold);</p>
+<p class="p1">border: 4px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">color: #1a0a2e;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 18px;</p>
+<p class="p1">padding: 14px 30px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">width: 100%;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* ────── WRONG ORDER POPUP ────── */</p>
+<p class="p1">.wrong-overlay {</p>
+<p class="p1">position: fixed;</p>
+<p class="p1">inset: 0;</p>
+<p class="p1">width: 390px;</p>
+<p class="p1">background: rgba(0,0,0,0.8);</p>
+<p class="p1">z-index: 600;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">justify-content: center;</p>
+<p class="p1">}</p>
+<p class="p1">.wrong-overlay.hidden { display: none; }</p>
+<p class="p1">.wrong-box {</p>
+<p class="p1">width: 320px;</p>
+<p class="p1">background: #2d1b4e;</p>
+<p class="p1">border: 4px solid var(–red);</p>
+<p class="p1">box-shadow: 6px 6px 0 #000;</p>
+<p class="p1">padding: 28px 20px 22px;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">animation: shake 0.3s steps(4);</p>
+<p class="p1">}</p>
+<p class="p1">@keyframes shake {</p>
+<p class="p1">0%,100%{transform:translateX(0)}</p>
+<p class="p1">25%{transform:translateX(-8px)}</p>
+<p class="p1">75%{transform:translateX(8px)}</p>
+<p class="p1">}</p>
+<p class="p1">.wrong-icon { font-size: 60px; margin-bottom: 10px; }</p>
+<p class="p1">.wrong-title { color: var(–red); font-size: 22px; margin-bottom: 10px; }</p>
+<p class="p1">.wrong-body { color: var(–white); font-size: 15px; line-height: 1.8; margin-bottom: 18px; }</p>
+<p class="p1">.wrong-btn {</p>
+<p class="p1">background: var(–red);</p>
+<p class="p1">border: 4px solid #000;</p>
+<p class="p1">box-shadow: var(–pixel-shadow);</p>
+<p class="p1">color: #fff;</p>
+<p class="p1">font-family: inherit;</p>
+<p class="p1">font-size: 16px;</p>
+<p class="p1">padding: 12px 30px;</p>
+<p class="p1">cursor: pointer;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* ─── DAILY ORDER FIXED BANNER ─── */</p>
+<p class="p1">.daily-banner {</p>
+<p class="p1">background: #1a0a2e;</p>
+<p class="p1">border-bottom: 3px solid var(–gold);</p>
+<p class="p1">border-top: 3px solid var(–gold);</p>
+<p class="p1">padding: 8px 12px;</p>
+<p class="p1">display: flex;</p>
+<p class="p1">align-items: flex-start;</p>
+<p class="p1">gap: 10px;</p>
+<p class="p1">flex-shrink: 0;</p>
+<p class="p1">animation: bannerSlideIn 0.3s steps(4) forwards;</p>
+<p class="p1">}</p>
+<p class="p1">.daily-banner.hidden { display: none; }</p>
+<p class="p1">@keyframes bannerSlideIn {</p>
+<p class="p1">from { opacity: 0; transform: translateY(-8px); }</p>
+<p class="p1">to { opacity: 1; transform: translateY(0); }</p>
+<p class="p1">}</p>
+<p class="p1">.daily-banner-left {</p>
+<p class="p1">display: flex;</p>
+<p class="p1">flex-direction: column;</p>
+<p class="p1">align-items: center;</p>
+<p class="p1">gap: 2px;</p>
+<p class="p1">flex-shrink: 0;</p>
+<p class="p1">background: var(–gold);</p>
+<p class="p1">border: 3px solid #000;</p>
+<p class="p1">padding: 4px 8px;</p>
+<p class="p1">box-shadow: 2px 2px 0 #000;</p>
+<p class="p1">}</p>
+<p class="p1">.daily-banner-star {</p>
+<p class="p1">font-size: 12px;</p>
+<p class="p1">color: #1a0a2e;</p>
+<p class="p1">animation: blink 1s step-end infinite;</p>
+<p class="p1">}</p>
+<p class="p1">.daily-banner-label {</p>
+<p class="p1">font-size: 11px;</p>
+<p class="p1">color: #1a0a2e;</p>
+<p class="p1">white-space: nowrap;</p>
+<p class="p1">line-height: 1.2;</p>
+<p class="p1">text-align: center;</p>
+<p class="p1">}</p>
+<p class="p1">.daily-banner-text {</p>
+<p class="p1">color: var(–white);</p>
+<p class="p1">font-size: 13px;</p>
+<p class="p1">line-height: 1.7;</p>
+<p class="p1">flex: 1;</p>
+<p class="p1">white-space: pre-line;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* pixel decorations */</p>
+<p class="p1">.px-deco {</p>
+<p class="p1">display: inline-block;</p>
+<p class="p1">width: 8px; height: 8px;</p>
+<p class="p1">background: var(–gold);</p>
+<p class="p1">box-shadow: 8px 0 0 var(–red), 16px 0 0 var(–green);</p>
+<p class="p1">margin-right: 24px;</p>
+<p class="p1">}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1">&lt;div id="app"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ══════════ SCREEN: WELCOME ══════════ --&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="screen-welcome" class="screen active"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="welcome-top"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="logo-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style="font-size:24px"&gt;🍔&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="logo-text"&gt;버거챌린지&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">```</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;canvas id="welcome-canvas" class="welcome-pixel-art" width="50" height="40"&gt;&lt;/canvas&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="welcome-msg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="em"&gt;어서오세요! 👋&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;아래 버튼을 눌러&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;주문을 시작해주세요&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="welcome-btns"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="welcome-btn eat px-btn" onclick="startOrder('매장')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="btn-icon"&gt;🪑&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span&gt;매장&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="btn-sub"&gt;여기서 드세요&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="welcome-btn takeout px-btn" onclick="startOrder('포장')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="btn-icon"&gt;🛍️&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span&gt;포장&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="btn-sub"&gt;가져가세요&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/button&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ══════════ DAILY ORDER POPUP ══════════ --&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="daily-popup-overlay hidden" id="daily-overlay"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="daily-popup"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="daily-popup-close px-btn" onclick="closeDailyPopup()"&gt;✕ 닫기&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="daily-title"&gt;💡 연습 도우미&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="daily-head"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="daily-star"&gt;★&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>오늘의 주문</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="daily-star"&gt;★&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="daily-menu-text" id="daily-text"&gt;로딩중...&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="daily-hint"&gt;👆 위 메뉴를 따라 주문해 보세요!&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ══════════ SCREEN: MAIN MENU ══════════ --&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="screen-main" class="screen"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="main-header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="main-logo"&gt;🍔 버거챌린지&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="main-mode-badge" id="mode-badge"&gt;매장&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">```</p>
+<p class="p1">&lt;!-- 오늘의 주문 고정 배너 --&gt;</p>
+<p class="p1">&lt;div id="daily-banner" class="daily-banner hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="daily-banner-left"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="daily-banner-star"&gt;★&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="daily-banner-label"&gt;오늘의 주문&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="daily-banner-text" id="daily-banner-text"&gt;&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="tabs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="tab active px-btn" onclick="switchTab('추천',this)" data-tab="추천"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="tab-icon"&gt;⭐&lt;/span&gt;추천메뉴</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="tab px-btn" onclick="switchTab('햄버거',this)" data-tab="햄버거"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="tab-icon"&gt;🍔&lt;/span&gt;햄버거</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="tab px-btn" onclick="switchTab('디저트',this)" data-tab="디저트"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="tab-icon"&gt;🍦&lt;/span&gt;디저트/치킨</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="tab px-btn" onclick="switchTab('음료',this)" data-tab="음료"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="tab-icon"&gt;🥤&lt;/span&gt;음료/커피</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/button&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="menu-area" id="menu-area"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="cart-area"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="cart-title"&gt;🛒 주문 내역 &lt;span id="cart-count" style="color:#fff;background:var(--red);padding:1px 7px;font-size:12px;border:2px solid #000"&gt;0&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="cart-list"&gt;&lt;div class="cart-empty"&gt;담긴 메뉴가 없습니다&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="bottom-bar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="total-display"&gt;합계&lt;br&gt;&lt;span id="total-price"&gt;0&lt;/span&gt;원&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="cancel-btn px-btn" onclick="cancelOrder()"&gt;취소하기&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="pay-btn px-btn" id="pay-btn" onclick="goToPay()"&gt;결제하기&lt;/button&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- SET POPUP --&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="overlay hidden" id="set-overlay"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="popup-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="popup-title"&gt;🍟 세트로 변경?&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="popup-body"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span id="set-item-name" class="em"&gt;불고기버거&lt;/span&gt;를&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>세트로 변경하시겠습니까?&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style="color:var(--gray);font-size:13px"&gt;(음료 + 감자튀김 추가)&lt;/span&gt;&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="em"&gt;+1,000원&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="popup-btns"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="popup-yes px-btn" onclick="setYes()"&gt;✅ 예&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="popup-no px-btn" onclick="setNo()"&gt;❌ 아니오&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ══════════ SCREEN: PAYMENT ══════════ --&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="screen-pay" class="screen"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="pay-header"&gt;💳 결제 방법 선택&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="pay-body"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pay-total-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="pay-total-label"&gt;결제 금액&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="pay-total-amt" id="pay-total-display"&gt;0원&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pay-ask"&gt;원하시는 결제 방법을 선택해주세요&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">```</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="pay-method-btn px-btn" id="pm-card" onclick="selectPayMethod('card')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="pay-method-icon"&gt;💳&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="pay-method-info"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pay-method-name"&gt;카드 결제&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pay-method-desc"&gt;신용카드 / 체크카드&lt;br&gt;카카오페이, 네이버페이 등 간편결제&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="pay-row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="pay-method-btn px-btn" id="pm-coupon" onclick="selectPayMethod('coupon')" style="flex-direction:column;align-items:center;text-align:center;gap:8px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="pay-method-icon"&gt;🎫&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pay-method-info"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="pay-method-name"&gt;디지털쿠폰/&lt;br&gt;교환권&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="pay-method-desc"&gt;제품교환권&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="pay-method-btn px-btn" id="pm-cash" onclick="selectPayMethod('cash')" style="flex-direction:column;align-items:center;text-align:center;gap:8px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="pay-method-icon"&gt;💵&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pay-method-info"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="pay-method-name"&gt;현금&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="pay-method-desc"&gt;주문은 여기서 하시고&lt;br&gt;결제는 카운터에서 해주세요&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="pay-confirm-btn px-btn" onclick="confirmPay()"&gt;💰 결제&lt;/button&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p1">&lt;button class="pay-back px-btn" onclick="goToMain()"&gt;← 뒤로가기&lt;/button&gt;</p>
+<p class="p1">```</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ══════════ SCREEN: COMPLETE ══════════ --&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="screen-complete" class="screen"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="complete-icon"&gt;🎉&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="complete-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="complete-title"&gt;주문이 완료되었습니다!&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="complete-num-label"&gt;주문 번호&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="complete-num" id="order-num"&gt;42&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="complete-sub"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>주문번호를 기억해 두세요&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>번호가 불리면 수령해 주세요 😊</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="restart-btn px-btn" onclick="restartApp()"&gt;🏠 처음으로 돌아가기&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- WRONG ORDER POPUP --&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="wrong-overlay hidden" id="wrong-overlay"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="wrong-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="wrong-icon"&gt;❌&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="wrong-title"&gt;주문을 다시 해주세요!&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="wrong-body"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>오늘의 주문 메뉴와&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>다르게 담으셨어요.&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style="color:var(--gray);font-size:13px"&gt;취소 후 다시 도전해보세요!&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="wrong-btn px-btn" onclick="closeWrong()"&gt;다시 주문하기&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>PIXEL ART RENDERING</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">const PALETTE = {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>_: null, // transparent</p>
+<p class="p1"><span class="Apple-converted-space">  </span>W: '#f5f5e0', B: '#1a0a2e', K: '#000000',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>R: '#e84040', O: '#f07030', Y: '#f5c518',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>G: '#30c060', C: '#30c0c0', U: '#3080e8',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>P: '#a040c0', N: '#c08050', T: '#80c080',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>L: '#e8b090', S: '#a0a0a0', E: '#fff0b0',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>D: '#c06030', M: '#f0a0a0', H: '#ffe0b0',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>I: '#e0e0e0', X: '#60a0ff', F: '#50d080',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>Z: '#ff80c0', Q: '#ffb040', V: '#d0b090',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>J: '#8b4513',</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">function drawPixelArt(canvas, grid, scale=4) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const rows = grid.length, cols = grid[0].length;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>canvas.width = cols; canvas.height = rows;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>canvas.style.width = cols*scale+'px'; canvas.style.height = rows*scale+'px';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const ctx = canvas.getContext('2d');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.imageSmoothingEnabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>grid.forEach((row,y) =&gt; row.split('').forEach((c,x) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const col = PALETTE[c];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (col) { ctx.fillStyle = col; ctx.fillRect(x,y,1,1); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}));</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ── MENU PIXEL ART DATA ──</p>
+<p class="p1">const PIXEL_ART = {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'불고기버거': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___YYYYYYY___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__YYYYYYYYYYYYY__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_YYYYYYYYYYYYYYY_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'BBBBBBBBBBBBBBBBB',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNLLLLLLLLLLNNNN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NLLLLLLLLLLLLLLLN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'GGGGGGGGGGGGGGGGG',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'RRRRRRRRRRRRRRRRR',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NLLLLLLLLLLLLLLLN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNNNNNNNNNNNNNNN',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'불갈비버거': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___RRRRRRR___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__RRRRRRRRRRRR__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_RRRRRYYYRRRRRRR_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'BBBBBBBBBBBBBBBBB',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNLLLLLLLLLLNNNN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NLLRRLLLLRRLLLLLN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'GGGGGGGGGGGGGGGGG',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'RRRRRRRRRRRRRRRRR',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NLLLLLLLLLLLLLLLN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNNNNNNNNNNNNNNN',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'치즈버거': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___YYYYYYY___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__YYYYYYYYYYYYY__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_YYYYYYYYYYYYYYY_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'BBBBBBBBBBBBBBBBB',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNLLLLLLLLLLNNNN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NYYYYYYYYYYYYYYYYN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'GGGGGGGGGGGGGGGGG',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'RRRRRRRRRRRRRRRRR',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NLLLLLLLLLLLLLLLN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNNNNNNNNNNNNNNN',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'빙수': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____CCCCC____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___CCCCCCCCC___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__WWWWWWWWWWW__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_WWWZZWWWWWWWW_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'WWWWWWWWRWWWWWWW',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__UUUUUUUUUUU__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__UUUUUUUUUUU__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___BBBBBBBBB___',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'맵닭버거': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___YYYYYYY___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__YYYYYYYYYYYYY__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_YYYYYYYYYYYYYYY_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'BBBBBBBBBBBBBBBBB',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNRRRRRRRRRRNNN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NRRRRRRRRRRRRRRRN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'GGGGGGGGGGGGGGGGG',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'ORRRRRRRRRRRRRRRO',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NLLLLLLLLLLLLLLLN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNNNNNNNNNNNNNNN',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'크리스피버거': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___YYYYYYY___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__YYYYYYYYYYYYY__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_YYYYYYYYYYYYYYY_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'BBBBBBBBBBBBBBBBB',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNIIIIIIIIINNN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NIIIIIIIIIIIIIIIN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'GGGGGGGGGGGGGGGGG',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'WWWWWWWWWWWWWWWWW',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NLLLLLLLLLLLLLLLN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNNNNNNNNNNNNNNN',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'양념치킨버거': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___RRRRRRR___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__RRRRRRRRRRRRR__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_RRRRRRRRRRRRRRR_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'BBBBBBBBBBBBBBBBB',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNRRRRRRRRRRNNN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NLLLLLLLLLLLLLLLN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'GGGGGGGGGGGGGGGGG',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'RRRRRRRRRRRRRRRRR',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NLLLLLLLLLLLLLLLN',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'NNNNNNNNNNNNNNNNN',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'오징어링': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____IIIII____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___IIIII_IIIII___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__III__I_I__III__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__II___I_I___II__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__III__I_I__III__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___IIIII_IIIII___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____IIIII____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____NNNNN____',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'포테이토': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____YYYYY____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___YYYYYYY___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__YYYYYYYYY__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_YYYYYYYYYYY_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_YYYYYYYYYYY_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__YYYYYYYYY__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____NNNNN____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____NNNNN____',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'양념감자': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____RRRRR____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___RRRRRRR___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__RRRRRRRRR__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_RRRRRRRRRRR_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_RRRRRRRRRRR_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__RRRRRRRRR__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____NNNNN____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____NNNNN____',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'해쉬브라운': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_____________',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__DDDDDDDDD__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_DNDNDNDNDND_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_DDDDDDDDDDD_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_DNDNDNDNDND_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_DDDDDDDDDDD_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__DDDDDDDDD__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_____________',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'소프트콘 아이스크림': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____ZZZZZ____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___ZZZZZZZZZ___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__ZZZZZZZZZZZ__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___ZZWWWWZZZ___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'____WWWWWWW____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_____NYNYN_____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'______NYN______',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_______N_______',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'콜라': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___KKKKK___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKWWWKK__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKKKKKK__',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'사이다': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___KKKKK___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKWWWKK__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KWWWWWWWK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KWCWWWWWK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KWWWWWWWK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KWWWCWWWK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KWWWWWWWK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KWWWWWWWK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKKKKKK__',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'제로콜라': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___KKKKK___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKWWWKK__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBWBBBWBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBWBBBWBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKKKKKK__',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'오렌지주스': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___KKKKK___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKWWWKK__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KOOOOOOOOK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KOOOOOOOOK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KOOOOOOOOK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KOOOOOOOOK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KOOOOOOOOK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KOOOOOOOOK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKKKKKK__',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'아메리카노': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___KKKKK___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKWWWKK__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KBBBBBBBK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKKKKKK__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'______K____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_____KKK___',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'라떼': [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'___KKKKK___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKWWWKK__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KHHHHHHHHK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KHNNHHHHK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KHHHHHHHK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KHHHHHHHK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KHHHHHHHK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KHHHHHHHK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKKKKKK__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'______K____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_____KKK___',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">function getArt(name) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (PIXEL_ART[name]) return PIXEL_ART[name];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// fallback square</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return ['KKKKK','KWWWK','KWYWK','KWWWK','KKKKK'];</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>DATA</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">const MENUS = {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>추천: [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'불고기버거', price:5300, isBurger:true},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'불갈비버거', price:5600, isBurger:true},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'치즈버거', price:5200, isBurger:true},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'빙수', price:4200, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'오징어링', price:2500, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'양념감자', price:2400, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>햄버거: [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'불고기버거', price:5300, isBurger:true},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'불갈비버거', price:5600, isBurger:true},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'치즈버거', price:5200, isBurger:true},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'맵닭버거', price:6300, isBurger:true},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'크리스피버거', price:7000, isBurger:true},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'양념치킨버거', price:6400, isBurger:true},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>디저트: [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'빙수', price:4200, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'포테이토', price:2000, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'양념감자', price:2400, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'오징어링', price:2500, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'해쉬브라운', price:3000, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'소프트콘 아이스크림', price:1500, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>음료: [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'콜라', price:3000, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'사이다', price:3000, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'제로콜라', price:3000, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'오렌지주스', price:4000, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'아메리카노', price:3300, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{name:'라떼', price:3600, isBurger:false},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>],</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">const DAILY_ORDERS = [</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'🍔 불고기버거 세트\n🍦 소프트콘 아이스크림',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'🍔 치즈버거\n🦑 오징어링\n🧊 빙수',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>'🍔 불갈비버거 세트\n🥔 양념감자\n🟫 해쉬브라운',</p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>STATE</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">let orderMode = '매장';</p>
+<p class="p1">let currentTab = '추천';</p>
+<p class="p1">let cart = []; // [{name, price, isSet}]</p>
+<p class="p1">let pendingItem = null;</p>
+<p class="p1">let selectedPayMethod = null;</p>
+<p class="p1">let dailyOrderIdx = 0;</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>INIT</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">window.onload = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>drawWelcome();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>dailyOrderIdx = Math.floor(Math.random() * DAILY_ORDERS.length);</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">function drawWelcome() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const c = document.getElementById('welcome-canvas');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// simple restaurant scene</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const scene = [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKKKKKKKKKKKKK__',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KRRRRRRRRRRRRRRK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KRRRRRRRRRRRRRRK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'_KKKKKKKKKKKKKKKK_',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKWWWKKWWWKK____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KWWWWKWWWWWK____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KWWWWKWWWWWK____',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'__KKKKKKKKKKKKK___',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'GGGGGGGGGGGGGGGGGG',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'GGGGGGGGGGGGGGGGGG',</p>
+<p class="p1"><span class="Apple-converted-space">  </span>];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>drawPixelArt(c, scene, 8);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>SCREEN NAVIGATION</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">function showScreen(id) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.screen').forEach(s =&gt; s.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById(id).classList.add('active');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function startOrder(mode) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>orderMode = mode;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('mode-badge').textContent = mode;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cart = [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>currentTab = '추천';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>renderMenu('추천');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>renderCart();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>showScreen('screen-main');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// reset tabs</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.tab').forEach(t =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>t.classList.toggle('active', t.dataset.tab === '추천');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// reset daily banner</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('daily-banner').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// show daily popup</p>
+<p class="p1"><span class="Apple-converted-space">  </span>showDailyPopup();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function goToPay() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (cart.length === 0) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// check wrong order</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const dailyText = DAILY_ORDERS[dailyOrderIdx];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const check = checkDailyOrder();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!check) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>showWrong(); return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>selectedPayMethod = null;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.pay-method-btn').forEach(b =&gt; b.classList.remove('selected'));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('pay-total-display').textContent = formatPrice(getTotal()) + '원';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>showScreen('screen-pay');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function goToMain() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>showScreen('screen-main');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function cancelOrder() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cart = [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>renderCart();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>showScreen('screen-welcome');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function restartApp() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cart = [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>showScreen('screen-welcome');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>DAILY ORDER</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">function showDailyPopup() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>dailyOrderIdx = Math.floor(Math.random() * DAILY_ORDERS.length);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('daily-text').textContent = DAILY_ORDERS[dailyOrderIdx];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('daily-overlay').classList.remove('hidden');</p>
+<p class="p1">}</p>
+<p class="p1">function closeDailyPopup() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('daily-overlay').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 배너에 오늘의 주문 텍스트 고정 표시</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const rawText = DAILY_ORDERS[dailyOrderIdx];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('daily-banner-text').textContent = rawText;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('daily-banner').classList.remove('hidden');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// simple check: does cart contain keywords from daily order?</p>
+<p class="p1">function checkDailyOrder() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const daily = DAILY_ORDERS[dailyOrderIdx];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const cartNames = cart.map(i =&gt; i.name + (i.isSet ? ' 세트' : ''));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (daily.includes('불고기버거 세트') &amp;&amp; !cart.some(i =&gt; i.name === '불고기버거' &amp;&amp; i.isSet)) return false;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (daily.includes('불갈비버거 세트') &amp;&amp; !cart.some(i =&gt; i.name === '불갈비버거' &amp;&amp; i.isSet)) return false;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (daily.includes('치즈버거') &amp;&amp; !daily.includes('세트') &amp;&amp; !cart.some(i =&gt; i.name === '치즈버거')) return false;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return true; // lenient: pass if burger condition met</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>TABS &amp; MENU</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">function switchTab(tab, el) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>currentTab = tab;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.tab').forEach(t =&gt; t.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>el.classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>renderMenu(tab);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function renderMenu(tab) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const area = document.getElementById('menu-area');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>area.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const items = MENUS[tab] || [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>items.forEach(item =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const card = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>card.className = 'menu-card';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const cnv = document.createElement('canvas');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>card.appendChild(cnv);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const nm = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>nm.className = 'menu-name';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>nm.textContent = item.name;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const pr = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pr.className = 'menu-price';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pr.textContent = formatPrice(item.price) + '원';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const btn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>btn.className = 'menu-add-btn px-btn';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>btn.textContent = '+ 담기';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>btn.onclick = () =&gt; addItem(item);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>card.appendChild(nm);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>card.appendChild(pr);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>card.appendChild(btn);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>area.appendChild(card);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// draw art</p>
+<p class="p1"><span class="Apple-converted-space">    </span>drawPixelArt(cnv, getArt(item.name), 5);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>CART</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">function addItem(item) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (item.isBurger) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pendingItem = item;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('set-item-name').textContent = item.name;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('set-overlay').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pushToCart(item.name, item.price, false);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function setYes() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!pendingItem) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>pushToCart(pendingItem.name, pendingItem.price + 1000, true);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>pendingItem = null;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('set-overlay').classList.add('hidden');</p>
+<p class="p1">}</p>
+<p class="p1">function setNo() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!pendingItem) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>pushToCart(pendingItem.name, pendingItem.price, false);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>pendingItem = null;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('set-overlay').classList.add('hidden');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function pushToCart(name, price, isSet) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const label = name + (isSet ? ' 세트' : '');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const existing = cart.find(i =&gt; i.label === label);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (existing) { existing.qty++; existing.totalPrice += price; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else cart.push({label, name, price, isSet, qty:1, totalPrice:price});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>renderCart();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function removeFromCart(label) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cart = cart.filter(i =&gt; i.label !== label);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>renderCart();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function renderCart() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const list = document.getElementById('cart-list');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const count = document.getElementById('cart-count');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const total = document.getElementById('total-price');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const payBtn = document.getElementById('pay-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const t = getTotal();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>total.textContent = formatPrice(t);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>count.textContent = cart.reduce((s,i)=&gt;s+i.qty,0);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>payBtn.disabled = cart.length === 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (cart.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>list.innerHTML = '&lt;div class="cart-empty"&gt;담긴 메뉴가 없습니다&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>list.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cart.forEach(item =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const row = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>row.className = 'cart-item';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>row.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="cart-item-name"&gt;${item.label}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="cart-item-qty"&gt;x${item.qty}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="cart-item-price"&gt;${formatPrice(item.totalPrice)}원&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="cart-item-del px-btn" onclick="removeFromCart('${item.label}')"&gt;삭제&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>list.appendChild(row);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function getTotal() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return cart.reduce((s,i) =&gt; s + i.totalPrice, 0);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>PAYMENT</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">function selectPayMethod(m) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>selectedPayMethod = m;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.pay-method-btn').forEach(b =&gt; b.classList.remove('selected'));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('pm-'+m).classList.add('selected');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function confirmPay() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!selectedPayMethod) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>alert('결제 방법을 선택해 주세요!');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const num = Math.floor(Math.random()*900)+100;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('order-num').textContent = num;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>showScreen('screen-complete');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>dailyOrderIdx = Math.floor(Math.random() * DAILY_ORDERS.length);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>WRONG ORDER</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">function showWrong() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('wrong-overlay').classList.remove('hidden');</p>
+<p class="p1">}</p>
+<p class="p1">function closeWrong() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('wrong-overlay').classList.add('hidden');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">//<span class="Apple-converted-space">  </span>UTILS</p>
+<p class="p1">// ════════════════════════════</p>
+<p class="p1">function formatPrice(n) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return n.toLocaleString('ko-KR');</p>
+<p class="p1">}</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
